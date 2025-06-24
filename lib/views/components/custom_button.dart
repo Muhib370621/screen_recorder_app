@@ -37,7 +37,7 @@ class CustomButton extends StatelessWidget {
         child: Center(
           child:
               isLoading ?? false
-                  ? CircularProgressIndicator()
+                  ? CircularProgressIndicator(color: AppColors.pureWhite,)
                   : icon!=null?Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                     children: [

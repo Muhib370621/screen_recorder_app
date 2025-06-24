@@ -24,7 +24,23 @@ class LoginScreen extends StatelessWidget {
                 10.h.verticalSpace,
                 Text("Login", style: AppTextStyles.w500Style(20.sp)),
                 10.h.verticalSpace,
-                CustomTextField(hintText: "Enter Email"),
+                Form(
+                  key: loginController.formKey.value,
+                  child: CustomTextField(
+                    controller: loginController.emailController.value,
+                    hintText: "Enter Email",
+                    validator: (value) {
+                      if (value == null ||
+                          value.isEmpty ) {
+                        // loginController.isValidEmail.value = false;
+                        return 'Enter a valid email';
+                      } else {
+                        // loginController.isValidEmail.value = true;
+                      }
+                      return null;
+                    },
+                  ),
+                ),
                 loginController.isExpanded.value
                     ? Column(
                       children: [
@@ -33,41 +49,75 @@ class LoginScreen extends StatelessWidget {
                           child: ListView.builder(
                             itemCount: loginController.accountTypeList.length,
                             itemBuilder: (context, index) {
-                              final item = loginController.accountTypeList[index];
+                              final item =
+                                  loginController.accountTypeList[index];
                               return RadioListTile<bool>(
                                 dense: true,
                                 title: Text(item.title),
                                 value: true,
                                 groupValue: item.isSelected,
                                 onChanged:
-                                    (val) => loginController.selectAccount(index),
+                                    (val) =>
+                                        loginController.selectAccount(index),
                                 selected: item.isSelected,
                               );
                             },
                           ),
                         ),
                         10.h.verticalSpace,
-                        CustomTextField(hintText: "Enter Password"),
-
+                        Form(
+                          key: loginController.formKey2.value,
+                          child: CustomTextField(
+                            controller: loginController.passwordController.value,
+                            hintText: "Enter Password",
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                // loginController.isValidEmail.value = false;
+                                return 'Password cant be empty';
+                              } else {
+                                // loginController.isValidEmail.value = true;
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
                       ],
                     )
                     : SizedBox.shrink(),
                 10.h.verticalSpace,
-                loginController.isExpanded.value?CustomButton(
-                  onTap: () {
-                    // loginController.isExpanded.value=true;
-                  },
-                  buttonText: "Login",
-                  backgroundColor: Colors.orange,
-                  icon: Icon(Icons.exit_to_app_sharp, color: AppColors.pureWhite),
-                ):CustomButton(
-                  onTap: () {
-                    loginController.isExpanded.value=true;
-                  },
-                  buttonText: "Continue",
-                  backgroundColor: Colors.orange,
-                  icon: Icon(Icons.exit_to_app_sharp, color: AppColors.pureWhite),
-                ),
+                loginController.isExpanded.value
+                    ? CustomButton(
+                  isLoading: loginController.isLoading.value,
+                      onTap: () {
+                        if (loginController.formKey2.value.currentState!
+                                .validate() &&
+                            loginController.formKey.value.currentState!
+                                .validate()) {
+                          loginController.login();
+                        }
+                        // loginController.isExpanded.value=true;
+                      },
+                      buttonText: "Login",
+                      backgroundColor: Colors.orange,
+                      icon: Icon(
+                        Icons.exit_to_app_sharp,
+                        color: AppColors.pureWhite,
+                      ),
+                    )
+                    : CustomButton(
+                      onTap: () {
+                        if (loginController.formKey.value.currentState!
+                            .validate()) {
+                          loginController.isExpanded.value = true;
+                        }
+                      },
+                      buttonText: "Continue",
+                      backgroundColor: Colors.orange,
+                      icon: Icon(
+                        Icons.exit_to_app_sharp,
+                        color: AppColors.pureWhite,
+                      ),
+                    ),
               ],
             ),
           );

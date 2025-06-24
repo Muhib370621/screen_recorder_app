@@ -1,14 +1,27 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:screen_record_app/model/entities/login_account_type_model.dart';
+
+import '../../core/utils/prompts.dart';
+import '../../services/api_services/auth_services.dart';
 
 class LoginController extends GetxController {
 
   RxBool isExpanded = false.obs;
+  RxBool isLoading = false.obs;
+  final formKey = GlobalKey<FormState>().obs;
+  final formKey2 = GlobalKey<FormState>().obs;
+  Rx<TextEditingController> emailController = TextEditingController().obs;
+  Rx<TextEditingController> passwordController = TextEditingController().obs;
+
 
 
   RxList<LoginAccountTypeModel> accountTypeList =
       <LoginAccountTypeModel>[
-        LoginAccountTypeModel(title: "ACMS", isSelected: false),
+        LoginAccountTypeModel(title: "ACMS", isSelected: true),
         LoginAccountTypeModel(title: "BasketBall Super league (Pro) 2024", isSelected: false),
         LoginAccountTypeModel(title: "Bay City Warriors", isSelected: false),
         LoginAccountTypeModel(title: "Branson Girls", isSelected: false),
@@ -36,4 +49,29 @@ class LoginController extends GetxController {
         }
         accountTypeList.refresh();
   }
+
+  login() async {
+    // try {
+      isLoading.value = true;
+      var result = await AuthServices().login(
+        emailController.value.text,
+        passwordController.value.text,
+      );
+      log(result.toString());
+      if(result['success']==0){
+        Prompts.errorSnackBar(result['error']);
+      }
+
+      isLoading.value = false;
+      return true;
+    // } on SocketException {
+    //   isLoading.value = false;
+    //   Prompts.errorSnackBar("Internet Connection Not Available!");
+    // } catch (e) {
+    //   Prompts.errorSnackBar(e.toString());
+    //
+    //   isLoading.value = false;
+    // }
+  }
+
 }
