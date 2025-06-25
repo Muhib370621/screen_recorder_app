@@ -64,13 +64,13 @@ class LoginController extends GetxController {
       accountTypeModel.value = result;
       accountTypeModel.value.programs?.first.isSelected=true;
       Prompts.successSnackBar("User Logged in successfully!");
-      // if (accountTypeModel.value.programs!.length == 1 ||
-      //     accountTypeModel.value.programs!.isEmpty) {
-      //   Get.offAll(() => DashboardScreen());
-      // } else {
+      if (accountTypeModel.value.programs!.length == 1 ||
+          accountTypeModel.value.programs!.isEmpty) {
+        Get.offAll(() => DashboardScreen());
+      } else {
 
         Get.offAll(() => SelectAccountTypeScreen());
-      // }
+      }
     }
 
     isLoading.value = false;
