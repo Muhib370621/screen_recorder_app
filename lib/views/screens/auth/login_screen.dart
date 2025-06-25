@@ -60,6 +60,7 @@ class LoginScreen extends StatelessWidget {
                     ,
                 10.h.verticalSpace,
                 CustomButton(
+                  isLoading: loginController.isLoading.value,
                       onTap: () {
                         if (loginController.formKey.value.currentState!
                             .validate() &&
