@@ -41,74 +41,31 @@ class LoginScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                loginController.isExpanded.value
-                    ? Column(
-                      children: [
-                        SizedBox(
-                          height: 0.52.sh,
-                          child: ListView.builder(
-                            itemCount: loginController.accountTypeList.length,
-                            itemBuilder: (context, index) {
-                              final item =
-                                  loginController.accountTypeList[index];
-                              return RadioListTile<bool>(
-                                dense: true,
-                                title: Text(item.title),
-                                value: true,
-                                groupValue: item.isSelected,
-                                onChanged:
-                                    (val) =>
-                                        loginController.selectAccount(index),
-                                selected: item.isSelected,
-                              );
-                            },
-                          ),
-                        ),
-                        10.h.verticalSpace,
-                        Form(
-                          key: loginController.formKey2.value,
-                          child: CustomTextField(
-                            controller: loginController.passwordController.value,
-                            hintText: "Enter Password",
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                // loginController.isValidEmail.value = false;
-                                return 'Password cant be empty';
-                              } else {
-                                // loginController.isValidEmail.value = true;
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ],
-                    )
-                    : SizedBox.shrink(),
+                 Form(
+                   key: loginController.formKey2.value,
+                   child: CustomTextField(
+                     controller: loginController.passwordController.value,
+                     hintText: "Enter Password",
+                     validator: (value) {
+                       if (value == null || value.isEmpty) {
+                         // loginController.isValidEmail.value = false;
+                         return 'Password cant be empty';
+                       } else {
+                         // loginController.isValidEmail.value = true;
+                       }
+                       return null;
+                     },
+                   ),
+                 )
+                    ,
                 10.h.verticalSpace,
-                loginController.isExpanded.value
-                    ? CustomButton(
-                  isLoading: loginController.isLoading.value,
-                      onTap: () {
-                        if (loginController.formKey2.value.currentState!
-                                .validate() &&
-                            loginController.formKey.value.currentState!
-                                .validate()) {
-                          loginController.login();
-                        }
-                        // loginController.isExpanded.value=true;
-                      },
-                      buttonText: "Login",
-                      backgroundColor: Colors.orange,
-                      icon: Icon(
-                        Icons.exit_to_app_sharp,
-                        color: AppColors.pureWhite,
-                      ),
-                    )
-                    : CustomButton(
+                CustomButton(
                       onTap: () {
                         if (loginController.formKey.value.currentState!
-                            .validate()) {
-                          loginController.isExpanded.value = true;
+                            .validate() &&
+                            loginController.formKey2.value.currentState!
+                                .validate()) {
+                          loginController.login();
                         }
                       },
                       buttonText: "Continue",

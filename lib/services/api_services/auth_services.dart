@@ -1,14 +1,15 @@
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:screen_record_app/model/api_models/account_type_model.dart';
 
 import '../core/api_helper.dart';
 import '../core/app_urls.dart';
-import 'package:http/http.dart' as http;
 
 class AuthServices{
 
-  login(
+  Future<AccountType>login(
       String email,
       String password,
       ) async {
@@ -35,6 +36,6 @@ class AuthServices{
       print("Response Body: ${response.body}");
       // print("HEADERS: $header");
     }
-    return ApiHelper.returnResponse(response);
+    return AccountType.fromJson(ApiHelper.returnResponse(response));
   }
 }
