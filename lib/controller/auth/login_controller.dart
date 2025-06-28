@@ -75,16 +75,17 @@ class LoginController extends GetxController {
       accountTypeModel.value = result;
       accountTypeModel.value.programs?.first.isSelected = true;
       Prompts.successSnackBar("User Logged in successfully!");
+      LocalStorage.saveJson(
+        key: LocalStorageKeys.programID,
+        value: accountTypeModel.value.programs!.first.id.toString(),
+      );
+      LocalStorage.saveJson(
+        key: LocalStorageKeys.programName,
+        value: accountTypeModel.value.programs!.first.name.toString(),
+      );
       if (accountTypeModel.value.programs!.length == 1 ||
           accountTypeModel.value.programs!.isEmpty) {
-        LocalStorage.saveJson(
-          key: LocalStorageKeys.programID,
-          value: accountTypeModel.value.programs!.first.id.toString(),
-        );
-        LocalStorage.saveJson(
-          key: LocalStorageKeys.programName,
-          value: accountTypeModel.value.programs!.first.name.toString(),
-        );
+
         Get.offAll(() => DashboardScreen());
       } else {
         Get.offAll(() => SelectAccountTypeScreen());

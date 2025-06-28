@@ -40,10 +40,10 @@ class CustomButton extends StatelessWidget {
                   ? CircularProgressIndicator(color: AppColors.pureWhite)
                   : icon != null
                   ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       icon ?? SizedBox(),
-                      // 5.w.horizontalSpace,
+                      5.w.horizontalSpace,
                       Text(
                         buttonText,
                         style: AppTextStyles.w600Style(
