@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import '../../core/utils/app_colors.dart';
 import '../../core/utils/app_text_styles.dart';
@@ -31,18 +32,18 @@ class CustomButton extends StatelessWidget {
         width: 0.85.sw,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(100.r)),
-          color: backgroundColor
-        
+          color: backgroundColor,
         ),
         child: Center(
           child:
               isLoading ?? false
-                  ? CircularProgressIndicator(color: AppColors.pureWhite,)
-                  : icon!=null?Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                  ? CircularProgressIndicator(color: AppColors.pureWhite)
+                  : icon != null
+                  ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       icon ?? SizedBox(),
-                      5.w.horizontalSpace,
+                      // 5.w.horizontalSpace,
                       Text(
                         buttonText,
                         style: AppTextStyles.w600Style(
@@ -51,13 +52,15 @@ class CustomButton extends StatelessWidget {
                         ),
                       ),
                     ],
-                  ):Text(
-                buttonText,
-                style: AppTextStyles.w600Style(
-                  15.sp,
-                  fontColor: AppColors.pureWhite,
-                ),
-              ),
+                  ).paddingSymmetric(horizontal: 80.w)
+                  : Text(
+                    buttonText,
+                    textAlign: TextAlign.start,
+                    style: AppTextStyles.w600Style(
+                      15.sp,
+                      fontColor: AppColors.pureWhite,
+                    ),
+                  ),
         ),
       ),
     );

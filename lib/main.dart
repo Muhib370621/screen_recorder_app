@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:screen_record_app/services/local_storage/local_storage.dart';
 import 'package:screen_record_app/views/screens/auth/login_screen.dart';
 
 void main() {
+  LocalStorage.init();
   runApp(const MyApp());
 }
 

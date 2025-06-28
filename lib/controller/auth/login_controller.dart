@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:screen_record_app/model/api_models/account_type_model.dart';
 import 'package:screen_record_app/model/entities/login_account_type_model.dart';
+import 'package:screen_record_app/services/local_storage/local_storage.dart';
+import 'package:screen_record_app/services/local_storage/local_storage_keys.dart';
 import 'package:screen_record_app/views/screens/auth/select_account_type_screen.dart';
 import 'package:screen_record_app/views/screens/main_screens/dashboard_screen.dart';
 
@@ -15,8 +17,8 @@ class LoginController extends GetxController {
   RxBool isLoading = false.obs;
   final formKey = GlobalKey<FormState>().obs;
   final formKey2 = GlobalKey<FormState>().obs;
-  Rx<TextEditingController> emailController = TextEditingController().obs;
-  Rx<TextEditingController> passwordController = TextEditingController().obs;
+  Rx<TextEditingController> emailController = TextEditingController(text: "bill+test1@dettering.com").obs;
+  Rx<TextEditingController> passwordController = TextEditingController(text: "pass9999").obs;
   Rx<AccountType> accountTypeModel = AccountType().obs;
 
   // RxList<LoginAccountTypeModel> accountTypeList =
@@ -46,7 +48,16 @@ class LoginController extends GetxController {
   void selectAccount(int index) {
     for (int i = 0; i < accountTypeModel.value.programs!.length; i++) {
       accountTypeModel.value.programs![i].isSelected = i == index;
+      LocalStorage.saveJson(
+        key: LocalStorageKeys.programID,
+        value: accountTypeModel.value.programs![i].id.toString(),
+      );
+      LocalStorage.saveJson(
+        key: LocalStorageKeys.programName,
+        value: accountTypeModel.value.programs![i].name.toString(),
+      );
     }
+
     accountTypeModel.refresh();
   }
 
@@ -59,16 +70,23 @@ class LoginController extends GetxController {
     );
     log(result.toJson().toString());
     if (result.success == 0) {
-      Prompts.errorSnackBar(result.toJson()['error']);
+      Prompts.errorSnackBar(result.toJson().toString());
     } else {
       accountTypeModel.value = result;
-      accountTypeModel.value.programs?.first.isSelected=true;
+      accountTypeModel.value.programs?.first.isSelected = true;
       Prompts.successSnackBar("User Logged in successfully!");
       if (accountTypeModel.value.programs!.length == 1 ||
           accountTypeModel.value.programs!.isEmpty) {
+        LocalStorage.saveJson(
+          key: LocalStorageKeys.programID,
+          value: accountTypeModel.value.programs!.first.id.toString(),
+        );
+        LocalStorage.saveJson(
+          key: LocalStorageKeys.programName,
+          value: accountTypeModel.value.programs!.first.name.toString(),
+        );
         Get.offAll(() => DashboardScreen());
       } else {
-
         Get.offAll(() => SelectAccountTypeScreen());
       }
     }

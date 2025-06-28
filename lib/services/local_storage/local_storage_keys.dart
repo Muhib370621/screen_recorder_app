@@ -1,6 +1,7 @@
 class LocalStorageKeys{
 
-  static String userID = "userID";
+  static String programID = "programID";
+  static String programName = "programName";
   static String accessToken = "accessToken";
 
 
