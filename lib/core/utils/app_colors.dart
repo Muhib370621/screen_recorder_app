@@ -8,6 +8,7 @@ class AppColors{
   static const Color pureBlack = Colors.black;
 
   static const Color kLightBlackBorder = Color(0xff212025);
+  static const Color kRed = Colors.red;
 
 
 }

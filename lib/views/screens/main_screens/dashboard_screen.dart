@@ -26,7 +26,7 @@ class DashboardScreen extends StatelessWidget {
               textScaler: TextScaler.linear(1),
               maxLines: 1,
               text: TextSpan(
-                text: 'Program Name:   ',
+                text: '',
                 style: AppTextStyles.w600Style(20.sp),
                 children: <TextSpan>[
                   TextSpan(
@@ -34,7 +34,7 @@ class DashboardScreen extends StatelessWidget {
                         LocalStorage.readJson(
                           key: LocalStorageKeys.programName,
                         ).toString(),
-                    style: AppTextStyles.w400Style(16.sp),
+                    style: AppTextStyles.w600Style(20.sp),
                   ),
                 ],
               ),
