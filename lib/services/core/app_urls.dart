@@ -9,4 +9,7 @@ class AppUrls {
   static String loginUrl(String email, String password){
     return "$baseUrl/get-team-data.php?login=$email&password=$password";}
 
+  static String saveGame(){
+    return "$baseUrl/save-game.php";}
+
 }

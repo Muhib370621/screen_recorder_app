@@ -1,29 +1,37 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+import '../core/api_helper.dart';
+import '../core/app_urls.dart';
+
 class HoopsylaticServices {
 
-  Future<dynamic>saveGame(
-      String email,
-      String password,
-  String programID,
-  String seasonID,
-  String levelID,
-  String gameDate,
-  String gameStartTime,
-  String isPractice,
-  String homeTeamID,
-  String visitorTeamID,
-  String newHomeTeamName,
-  String newVisitorTeamName,
-  String home_team_color
-  String visitor_team_color
-  String scorebook_photo_url (optional)
-  String video_url
-  String location
-  String scoring_rules_id
-  String is_neutral_site (0/1)
-  String self_score (0/1)
-      ) async {
+  Future<dynamic> saveGame(
+    String email,
+    String password,
+    String programID,
+    String seasonID,
+    String levelID,
+    String gameDate,
+    String gameStartTime,
+    String isPractice,
+    String homeTeamID,
+    String visitorTeamID,
+    String newHomeTeamName,
+    String newVisitorTeamName,
+    String homeTeamColor,
+    String visitorTeamColor,
+    String scorebookPhotoUrl,
+    String videoUrl,
+    String location,
+    String scoringRulesID,
+    String isNeutralSite,
+    String selfScore,
+  ) async {
     // url
-    String url = AppUrls.loginUrl(email, password);
+    String url = AppUrls.saveGame();
 
     // //header
     // var header = AppHeaders.getOnlyBearerHeaders(
@@ -33,19 +41,41 @@ class HoopsylaticServices {
     // );
 
     //body
-    // var data = {"email": email, "password": password};
+    Map<String, dynamic> data = {
+      'login': email,
+      'password': password,
+      'program_id': programID,
+      'season_id': seasonID,
+      'level_id': levelID,
+      'game_date': gameDate,
+      'game_start_time': gameStartTime,
+      'is_practice': isPractice, // 1 = practice, 0 = game
+      'home_team_id': homeTeamID, // 0 if using new_home_team_name
+      'visitor_team_id': visitorTeamID, // 0 if using new_visitor_team_name
+      'new_home_team_name': newHomeTeamName,
+      'new_visitor_team_name': newVisitorTeamName,
+      'home_team_color': homeTeamColor,
+      'visitor_team_color': visitorTeamColor,
+      'scorebook_photo_url': scorebookPhotoUrl, // optional
+      'video_url': videoUrl,
+      'location': location,
+      'scoring_rules_id': scoringRulesID,
+      'is_neutral_site': isNeutralSite, // 0 or 1
+      'self_score': selfScore // 0 or 1
+    };
+
     var response = await http.post(
       Uri.parse(url),
-      // body: data,
+
+      body: data,
     );
     if (kDebugMode) {
       log("Called API: $url");
       print("Status Code: ${response.statusCode}");
-      // print("Sent Body: ${data.toString()}");
+      print("Sent Body: ${data.toString()}");
       print("Response Body: ${response.body}");
       // print("HEADERS: $header");
     }
-    return AccountType.fromJson(ApiHelper.returnResponse(response));
+    return (ApiHelper.returnResponse(response));
   }
-
 }
