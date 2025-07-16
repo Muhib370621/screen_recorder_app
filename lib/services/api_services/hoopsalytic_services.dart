@@ -46,7 +46,7 @@ class HoopsylaticServices {
       'password': password,
       'program_id': programID,
       'season_id': seasonID,
-      'level_id': levelID,
+      'level_id': homeTeamID,
       'game_date': gameDate,
       'game_start_time': gameStartTime,
       'is_practice': isPractice, // 1 = practice, 0 = game

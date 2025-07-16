@@ -5,7 +5,6 @@ import 'package:screen_record_app/controller/auth/login_controller.dart';
 import 'package:screen_record_app/controller/main_controllers/meta_data_controller.dart';
 import 'package:screen_record_app/services/local_storage/local_storage.dart';
 import 'package:screen_record_app/services/local_storage/local_storage_keys.dart';
-
 import '../../../core/utils/app_colors.dart';
 import '../../components/custom_button.dart';
 
@@ -17,11 +16,12 @@ class GameSetupForm extends StatefulWidget {
 }
 
 class _GameSetupFormState extends State<GameSetupForm> {
+  String scoreType = "game"; // game or practice
   String sameLevel = 'ACMS Girls';
-  String homeTeam = 'ACMS Girls';
-  String visitorTeam = 'Carson Valley Girls 8th';
-  String location = 'ACMS';
-  String scoringRules = 'High School (8 minute quarters)';
+  String homeTeam = '';
+  String visitorTeam = '';
+  String location = '';
+  String scoringRules = '';
   String scorerOption = 'hoopsalytics';
 
   Color homeTeamColor = Colors.white;
@@ -37,6 +37,8 @@ class _GameSetupFormState extends State<GameSetupForm> {
     'Scrimmage': false,
   };
 
+  final TextEditingController filmedByController = TextEditingController();
+
   final List<Color> colorOptions = [
     Colors.white,
     Colors.black,
@@ -45,7 +47,7 @@ class _GameSetupFormState extends State<GameSetupForm> {
     Colors.grey,
     Colors.green,
     Colors.red.shade900,
-    Colors.indigo[900]!, // Navy
+    Colors.indigo[900]!,
     Colors.orange,
     Colors.pink,
     Colors.purple,
@@ -104,10 +106,7 @@ class _GameSetupFormState extends State<GameSetupForm> {
                       child: Text(
                         colorLabels[index],
                         style: TextStyle(
-                          color:
-                          color == Colors.black
-                              ? Colors.white
-                              : Colors.black,
+                          color: color == Colors.black ? Colors.white : Colors.black,
                           fontSize: 10,
                         ),
                         textAlign: TextAlign.center,
@@ -129,7 +128,7 @@ class _GameSetupFormState extends State<GameSetupForm> {
     final metDataController = Get.put(MetaDataController());
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Prepare Game/Practice')),
+      appBar: AppBar(title: const Text('New Game or Practice')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Obx(() {
@@ -138,28 +137,22 @@ class _GameSetupFormState extends State<GameSetupForm> {
             children: [
               _label('Season:'),
               DropdownButtonFormField<String>(
-                items:
-                loginController
-                    .getSeasons()
-                    .map(
-                      (e) =>
-                      DropdownMenuItem(
-                        value: e.seasonId,
-                        child: Text(e.seasonName ?? ""),
-                      ),
-                )
-                    .toList(),
+                items: loginController.getSeasons().map((e) {
+                  return DropdownMenuItem(
+                    value: e.seasonId,
+                    child: Text(e.seasonName ?? ""),
+                  );
+                }).toList(),
                 onChanged: (v) => metDataController.selectedSeason.value = v!,
               ),
               const SizedBox(height: 16),
 
               _label('Same Level as:'),
               DropdownButtonFormField<String>(
-                value: sameLevel,
-                items:
-                ['ACMS Girls', 'Other Level']
-                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                    .toList(),
+                // value: sameLevel,
+                items: loginController.getTeams().map((e) {
+                  return DropdownMenuItem(value: e.name, child: Text(e.name ?? ""));
+                }).toList(),
                 onChanged: (v) => setState(() => sameLevel = v!),
               ),
               const SizedBox(height: 8),
@@ -171,143 +164,127 @@ class _GameSetupFormState extends State<GameSetupForm> {
                     child: RadioListTile<String>(
                       title: const Text('Score a Game'),
                       value: 'game',
-                      groupValue: 'game',
-                      onChanged: (_) {},
+                      groupValue: scoreType,
+                      onChanged: (v) => setState(() => scoreType = v!),
                     ),
                   ),
                   Expanded(
                     child: RadioListTile<String>(
                       title: const Text('Score a Practice'),
                       value: 'practice',
-                      groupValue: 'game',
-                      onChanged: (_) {},
+                      groupValue: scoreType,
+                      onChanged: (v) => setState(() => scoreType = v!),
                     ),
                   ),
                 ],
               ),
+
               const SizedBox(height: 16),
 
-              _label('Home Team:'),
+              if (scoreType == 'game') ...[
+                _label('*Home Team:'),
+                DropdownButtonFormField<String>(
+                  // value: homeTeam.isNotEmpty ? homeTeam : null,
+                  items: loginController.getTeams().map((e) {
+                    return DropdownMenuItem(value: e.id, child: Text(e.name ?? ""));
+                  }).toList(),
+                  onChanged: (v) => setState(() => homeTeam = v!),
+                ),
+                Row(
+                  children: [
+                    Container(width: 30, height: 30, color: homeTeamColor, margin: const EdgeInsets.only(right: 8)),
+                    TextButton(child: const Text('change color'), onPressed: () => _showColorPicker(true)),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                _label('*Visitor Team:'),
+                DropdownButtonFormField<String>(
+                  value: visitorTeam.isNotEmpty ? visitorTeam : null,
+                  items: loginController.getTeams().map((e) {
+                    return DropdownMenuItem(value: e.id, child: Text(e.name ?? ""));
+                  }).toList(),
+                  onChanged: (v) => setState(() => visitorTeam = v!),
+                ),
+                Row(
+                  children: [
+                    Container(width: 30, height: 30, color: visitorTeamColor, margin: const EdgeInsets.only(right: 8)),
+                    TextButton(child: const Text('change color'), onPressed: () => _showColorPicker(false)),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+                _label('*Location:'),
+                TextFormField(
+                  decoration: const InputDecoration(hintText: "where game is played"),
+                  onChanged: (v) => location = v,
+                ),
+                CheckboxListTile(
+                  value: isNeutralSite,
+                  onChanged: (v) => setState(() => isNeutralSite = v!),
+                  title: const Text('Neutral Site (Playoff or Tournament)'),
+                ),
+
+                const SizedBox(height: 16),
+                _label('Game Type:'),
+                Column(
+                  children: gameTypes.keys.map((type) {
+                    return CheckboxListTile(
+                      value: gameTypes[type],
+                      onChanged: (v) => setState(() => gameTypes[type] = v!),
+                      title: Text(type),
+                    );
+                  }).toList(),
+                ),
+              ],
+
+              const SizedBox(height: 16),
+              _label('*Date:'),
+              TextFormField(initialValue: '15/07/2025', readOnly: true),
+
+              const SizedBox(height: 16),
+              _label('*Start Time:'),
+              TextFormField(initialValue: '04:00 pm', readOnly: true),
+
+              const SizedBox(height: 16),
+              _label('*Scoring Rules:'),
               DropdownButtonFormField<String>(
-                items:
-                loginController
-                    .getTeams().isEmpty?[]:loginController.getTeams()
-                    .map(
-                      (e) =>
-                      DropdownMenuItem(
-                        value: e.id,
-                        child: Text(e.name ?? ""),
-                      ),
-                )
-                    .toList(),
-                onChanged: (v) => setState(() => homeTeam = v!),
-              ),
-              const SizedBox(height: 8),
-
-              Row(
-                children: [
-                  Container(
-                    width: 30,
-                    height: 30,
-                    color: homeTeamColor,
-                    margin: const EdgeInsets.only(right: 8),
-                  ),
-                  TextButton(
-                    child: const Text('Change color'),
-                    onPressed: () => _showColorPicker(true),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              _label('Visitor Team:'),
-              DropdownButtonFormField<String>(
-                // value: visitorTeam,
-                items:
-                loginController
-                    .getTeams()
-                    .map(
-                      (e) =>
-                      DropdownMenuItem(
-                        value: e.id,
-                        child: Text(e.name ?? ""),
-                      ),
-                )
-                    .toList(),
-                onChanged: (v) => setState(() => visitorTeam = v!),
-              ),
-              const SizedBox(height: 8),
-
-              Row(
-                children: [
-                  Container(
-                    width: 30,
-                    height: 30,
-                    color: visitorTeamColor,
-                    margin: const EdgeInsets.only(right: 8),
-                  ),
-                  TextButton(
-                    child: const Text('Change color'),
-                    onPressed: () => _showColorPicker(false),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              _label('Location:'),
-              TextFormField(
-                initialValue: location,
-                onChanged: (v) => setState(() => location = v),
-              ),
-              CheckboxListTile(
-                value: isNeutralSite,
-                onChanged: (v) => setState(() => isNeutralSite = v!),
-                title: const Text('Neutral Site (Playoff or Tournament)'),
-              ),
-              const SizedBox(height: 16),
-
-              _label('Game Type:'),
-              Column(
-                children:
-                gameTypes.keys.map((type) {
-                  return CheckboxListTile(
-                    value: gameTypes[type],
-                    onChanged: (v) => setState(() => gameTypes[type] = v!),
-                    title: Text(type),
-                  );
+                value: scoringRules.isNotEmpty ? scoringRules : null,
+                items: loginController.getScoringRules().map((e) {
+                  return DropdownMenuItem(value: e.id, child: Text(e.name ?? ""));
                 }).toList(),
-              ),
-              const SizedBox(height: 16),
-
-              _label('Scoring Rules:'),
-              DropdownButtonFormField<String>(
-                // value: scoringRules,
-                items:
-                loginController
-                    .getScoringRules()
-                    .map(
-                      (e) =>
-                      DropdownMenuItem(
-                        value: e.id,
-                        child: Text(e.name ?? ""),
-                      ),
-                )
-                    .toList(),
                 onChanged: (v) => setState(() => scoringRules = v!),
               ),
-              const SizedBox(height: 16),
 
-              _label('Scorer:'),
+              const SizedBox(height: 16),
+              _label('Filmed By:'),
+              TextFormField(
+                controller: filmedByController,
+                decoration: const InputDecoration(hintText: 'name of camera operator (optional)'),
+              ),
+
+              const SizedBox(height: 16),
+              _label('*Video Source:'),
+              Column(
+                children: [
+                  RadioListTile(title: const Text("Upload Video to Cloud Server"), value: 'cloud', groupValue: '', onChanged: (_) {}),
+                  RadioListTile(title: const Text("YouTube URL"), value: 'youtube', groupValue: '', onChanged: (_) {}),
+                  RadioListTile(title: const Text("Video URL (MP4 or MOV file)"), value: 'url', groupValue: '', onChanged: (_) {}),
+                  RadioListTile(title: const Text("Scheduled (Upload Later)"), value: 'later', groupValue: '', onChanged: (_) {}),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+              _label('*Scorer:'),
               RadioListTile<String>(
-                title: const Text(
-                  'Hoopsalytics will score this game for me. (9 games remaining out of 10 allocated)',
-                ),
+                title: const Text('Hoopsalytics will score this game for me.'),
                 value: 'hoopsalytics',
                 groupValue: scorerOption,
                 onChanged: (v) => setState(() => scorerOption = v!),
               ),
               RadioListTile<String>(
-                title: const Text('I will score it myself'),
+                title: const Text('I will score the video myself'),
                 value: 'self',
                 groupValue: scorerOption,
                 onChanged: (v) => setState(() => scorerOption = v!),
@@ -326,40 +303,33 @@ class _GameSetupFormState extends State<GameSetupForm> {
             sameLevel,
             "gameDate",
             "gameStartTime",
-            "isPractice",
-            "homeTeamID",
-            "visitorTeamID",
+            scorerOption=="self"?"1":"0",
+            homeTeam,
+            visitorTeam,
             "newHomeTeamName",
             "newVisitorTeamName",
-            "homeTeamColor",
-            "visitorTeamColor",
+            homeTeamColor.colorSpace.hashCode.toString(),
+            visitorTeamColor.colorSpace.hashCode.toString(),
             "scorebookPhotoUrl",
             "videoUrl",
             location,
-            "scoringRulesID",
+            scoringRules,
             isNeutralSite?"1":"0",
 
-            "selfScore",);
+            "0",);
         },
-        // isLoading: loginController.isLoading.value,
-        // onTap: () {
-        //   if (loginController.formKey.value.currentState!
-        //       .validate() &&
-        //       loginController.formKey2.value.currentState!
-        //           .validate()) {
-        //     loginController.login();
-        //   }
-        // },
-        buttonText: "Save Game",
+
+        buttonText: "Continue",
         backgroundColor: Colors.orange,
-        icon: Icon(Icons.save, color: AppColors.pureWhite),
+        icon: const Icon(Icons.arrow_forward, color: Colors.white),
       ).paddingOnly(bottom: 10.h, top: 5.h),
     );
   }
 
-  Widget _label(String text) =>
-      Padding(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
-      );
+  Widget _label(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
+    );
+  }
 }

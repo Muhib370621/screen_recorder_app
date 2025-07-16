@@ -56,7 +56,7 @@ class MetaDataController extends GetxController{
         scoringRulesID,
         isNeutralSite,
         selfScore);
-    log(result.toJson().toString());
+    log(result.toString());
     if (result.success == 0) {
       Prompts.errorSnackBar(result.toJson().toString());
     } else {
