@@ -41,38 +41,38 @@ class HoopsylaticServices {
     // );
 
     //body
-    Map<String, dynamic> data = {
-      'login': email,
-      'password': password,
-      'program_id': programID,
-      'season_id': seasonID,
-      'level_id': homeTeamID,
-      'game_date': gameDate,
-      'game_start_time': gameStartTime,
-      'is_practice': isPractice, // 1 = practice, 0 = game
-      'home_team_id': homeTeamID, // 0 if using new_home_team_name
-      'visitor_team_id': visitorTeamID, // 0 if using new_visitor_team_name
-      'new_home_team_name': newHomeTeamName,
-      'new_visitor_team_name': newVisitorTeamName,
-      'home_team_color': homeTeamColor,
-      'visitor_team_color': visitorTeamColor,
-      'scorebook_photo_url': scorebookPhotoUrl, // optional
-      'video_url': videoUrl,
-      'location': location,
-      'scoring_rules_id': scoringRulesID,
-      'is_neutral_site': isNeutralSite, // 0 or 1
-      'self_score': selfScore // 0 or 1
-    };
+    // Map<String, dynamic> data = {
+    //   'login': email,
+    //   'password': password,
+    //   'program_id': programID,
+    //   'season_id': seasonID,
+    //   'level_id': homeTeamID,
+    //   'game_date': gameDate,
+    //   'game_start_time': gameStartTime,
+    //   'is_practice': isPractice, // 1 = practice, 0 = game
+    //   'home_team_id': homeTeamID, // 0 if using new_home_team_name
+    //   'visitor_team_id': visitorTeamID, // 0 if using new_visitor_team_name
+    //   'new_home_team_name': newHomeTeamName,
+    //   'new_visitor_team_name': newVisitorTeamName,
+    //   'home_team_color': homeTeamColor,
+    //   'visitor_team_color': visitorTeamColor,
+    //   'scorebook_photo_url': scorebookPhotoUrl, // optional
+    //   'video_url': videoUrl,
+    //   'location': location,
+    //   'scoring_rules_id': scoringRulesID,
+    //   'is_neutral_site': isNeutralSite, // 0 or 1
+    //   'self_score': selfScore // 0 or 1
+    // };
 
-    var response = await http.post(
+    var response = await http.get(
       Uri.parse(url),
 
-      body: data,
+      // body: data,
     );
     if (kDebugMode) {
       log("Called API: $url");
       print("Status Code: ${response.statusCode}");
-      print("Sent Body: ${data.toString()}");
+      // print("Sent Body: ${data.toString()}");
       print("Response Body: ${response.body}");
       // print("HEADERS: $header");
     }
