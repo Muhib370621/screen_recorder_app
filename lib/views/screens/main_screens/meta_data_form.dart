@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:screen_record_app/controller/auth/login_controller.dart';
 import 'package:screen_record_app/controller/main_controllers/meta_data_controller.dart';
+import 'package:screen_record_app/services/api_services/vimeo_services.dart';
 import 'package:screen_record_app/services/local_storage/local_storage.dart';
 import 'package:screen_record_app/services/local_storage/local_storage_keys.dart';
 import '../../../core/utils/app_colors.dart';
@@ -294,29 +297,32 @@ class _GameSetupFormState extends State<GameSetupForm> {
         }),
       ),
       bottomNavigationBar: CustomButton(
-        onTap: () {
-          metDataController.saveGame(
-            loginController.emailController.value.text,
-            loginController.passwordController.value.text,
-            LocalStorage.readJson(key: LocalStorageKeys.programID),
-            metDataController.selectedSeason.value,
-            sameLevel,
-            "gameDate",
-            "gameStartTime",
-            scorerOption=="self"?"1":"0",
-            homeTeam,
-            visitorTeam,
-            "newHomeTeamName",
-            "newVisitorTeamName",
-            homeTeamColor.colorSpace.hashCode.toString(),
-            visitorTeamColor.colorSpace.hashCode.toString(),
-            "scorebookPhotoUrl",
-            "videoUrl",
-            location,
-            scoringRules,
-            isNeutralSite?"1":"0",
+        onTap: () async {
+          // await VimeoUploader().generateAccessToken();
+          VimeoUploader().uploadVideo(File(metDataController.videPath.value));
 
-            "0",);
+          // metDataController.saveGame(
+          //   loginController.emailController.value.text,
+          //   loginController.passwordController.value.text,
+          //   LocalStorage.readJson(key: LocalStorageKeys.programID),
+          //   metDataController.selectedSeason.value,
+          //   sameLevel,
+          //   "gameDate",
+          //   "gameStartTime",
+          //   scorerOption=="self"?"1":"0",
+          //   homeTeam,
+          //   visitorTeam,
+          //   "newHomeTeamName",
+          //   "newVisitorTeamName",
+          //   homeTeamColor.colorSpace.hashCode.toString(),
+          //   visitorTeamColor.colorSpace.hashCode.toString(),
+          //   "scorebookPhotoUrl",
+          //   "videoUrl",
+          //   location,
+          //   scoringRules,
+          //   isNeutralSite?"1":"0",
+          //
+          //   "0",);
         },
 
         buttonText: "Continue",

@@ -8,6 +8,7 @@ import '../../core/utils/prompts.dart';
 class MetaDataController extends GetxController{
 
   RxString selectedSeason= "".obs;
+  RxString videPath= "".obs;
   RxBool isLoading = false.obs;
 
 

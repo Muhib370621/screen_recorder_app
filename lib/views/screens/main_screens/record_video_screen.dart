@@ -10,6 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:screen_record_app/views/screens/main_screens/meta_data_form.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
+import '../../../controller/main_controllers/meta_data_controller.dart';
 import '../../../core/utils/app_colors.dart';
 import '../../components/blinking_text.dart';
 
@@ -34,6 +35,9 @@ class _RecordVideoScreenState extends State<RecordVideoScreen> {
   GlobalKey pauseButton = GlobalKey();
   GlobalKey startButton = GlobalKey();
   GlobalKey stopButton = GlobalKey();
+
+  final metDataController = Get.put(MetaDataController());
+
 
   @override
   void initState() {
@@ -106,9 +110,10 @@ class _RecordVideoScreenState extends State<RecordVideoScreen> {
       _isPaused = false;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Video saved at: ${file.path}")),
-    );
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(content: Text("Video saved at: ${file.path}")),
+    // );
+    metDataController.videPath.value = file.path;
     Get.to(()=> GameSetupForm());
   }
 
