@@ -11,6 +11,8 @@ import 'package:screen_record_app/services/local_storage/local_storage_keys.dart
 import '../../../core/utils/app_colors.dart';
 import '../../components/custom_button.dart';
 
+// Keep your imports unchanged
+
 class GameSetupForm extends StatefulWidget {
   const GameSetupForm({super.key});
 
@@ -19,13 +21,16 @@ class GameSetupForm extends StatefulWidget {
 }
 
 class _GameSetupFormState extends State<GameSetupForm> {
-  String scoreType = "game"; // game or practice
-  String sameLevel = 'ACMS Girls';
+  final _formKey = GlobalKey<FormState>();
+
+  String scoreType = "game";
+  String sameLevel = '';
   String homeTeam = '';
   String visitorTeam = '';
   String location = '';
   String scoringRules = '';
   String scorerOption = 'hoopsalytics';
+  String uploadOption = 'youtube';
 
   Color homeTeamColor = Colors.white;
   Color visitorTeamColor = Colors.black;
@@ -41,6 +46,9 @@ class _GameSetupFormState extends State<GameSetupForm> {
   };
 
   final TextEditingController filmedByController = TextEditingController();
+  final TextEditingController dateController = TextEditingController(text: '15/07/2025');
+  final TextEditingController startTimeController = TextEditingController(text: '04:00 pm');
+  final TextEditingController locationController = TextEditingController();
 
   final List<Color> colorOptions = [
     Colors.white,
@@ -132,203 +140,219 @@ class _GameSetupFormState extends State<GameSetupForm> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('New Game or Practice')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Obx(() {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _label('Season:'),
-              DropdownButtonFormField<String>(
-                items: loginController.getSeasons().map((e) {
-                  return DropdownMenuItem(
-                    value: e.seasonId,
-                    child: Text(e.seasonName ?? ""),
-                  );
-                }).toList(),
-                onChanged: (v) => metDataController.selectedSeason.value = v!,
-              ),
-              const SizedBox(height: 16),
-
-              _label('Same Level as:'),
-              DropdownButtonFormField<String>(
-                // value: sameLevel,
-                items: loginController.getTeams().map((e) {
-                  return DropdownMenuItem(value: e.name, child: Text(e.name ?? ""));
-                }).toList(),
-                onChanged: (v) => setState(() => sameLevel = v!),
-              ),
-              const SizedBox(height: 8),
-
-              _label('Score Option:'),
-              Row(
-                children: [
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: const Text('Score a Game'),
-                      value: 'game',
-                      groupValue: scoreType,
-                      onChanged: (v) => setState(() => scoreType = v!),
-                    ),
-                  ),
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: const Text('Score a Practice'),
-                      value: 'practice',
-                      groupValue: scoreType,
-                      onChanged: (v) => setState(() => scoreType = v!),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              if (scoreType == 'game') ...[
-                _label('*Home Team:'),
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Obx(() {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _label('Season:'),
                 DropdownButtonFormField<String>(
-                  // value: homeTeam.isNotEmpty ? homeTeam : null,
-                  items: loginController.getTeams().map((e) {
-                    return DropdownMenuItem(value: e.id, child: Text(e.name ?? ""));
-                  }).toList(),
-                  onChanged: (v) => setState(() => homeTeam = v!),
-                ),
-                Row(
-                  children: [
-                    Container(width: 30, height: 30, color: homeTeamColor, margin: const EdgeInsets.only(right: 8)),
-                    TextButton(child: const Text('change color'), onPressed: () => _showColorPicker(true)),
-                  ],
-                ),
-
-                const SizedBox(height: 16),
-
-                _label('*Visitor Team:'),
-                DropdownButtonFormField<String>(
-                  value: visitorTeam.isNotEmpty ? visitorTeam : null,
-                  items: loginController.getTeams().map((e) {
-                    return DropdownMenuItem(value: e.id, child: Text(e.name ?? ""));
-                  }).toList(),
-                  onChanged: (v) => setState(() => visitorTeam = v!),
-                ),
-                Row(
-                  children: [
-                    Container(width: 30, height: 30, color: visitorTeamColor, margin: const EdgeInsets.only(right: 8)),
-                    TextButton(child: const Text('change color'), onPressed: () => _showColorPicker(false)),
-                  ],
-                ),
-
-                const SizedBox(height: 16),
-                _label('*Location:'),
-                TextFormField(
-                  decoration: const InputDecoration(hintText: "where game is played"),
-                  onChanged: (v) => location = v,
-                ),
-                CheckboxListTile(
-                  value: isNeutralSite,
-                  onChanged: (v) => setState(() => isNeutralSite = v!),
-                  title: const Text('Neutral Site (Playoff or Tournament)'),
-                ),
-
-                const SizedBox(height: 16),
-                _label('Game Type:'),
-                Column(
-                  children: gameTypes.keys.map((type) {
-                    return CheckboxListTile(
-                      value: gameTypes[type],
-                      onChanged: (v) => setState(() => gameTypes[type] = v!),
-                      title: Text(type),
+                  items: loginController.getSeasons().map((e) {
+                    return DropdownMenuItem(
+                      value: e.seasonId,
+                      child: Text(e.seasonName ?? ""),
                     );
                   }).toList(),
+                  onChanged: (v) => metDataController.selectedSeason.value = v!,
+                  validator: (value) => value == null ? 'Required' : null,
+                ),
+
+                const SizedBox(height: 16),
+                _label('Same Level as:'),
+                DropdownButtonFormField<String>(
+                  items: loginController.getTeams().map((e) {
+                    return DropdownMenuItem(value: e.name, child: Text(e.name ?? ""));
+                  }).toList(),
+                  onChanged: (v) => setState(() => sameLevel = v!),
+                  validator: (value) => value == null ? 'Required' : null,
+                ),
+
+                const SizedBox(height: 8),
+                _label('Score Option:'),
+                Row(
+                  children: [
+                    Expanded(
+                      child: RadioListTile<String>(
+                        title: const Text('Score a Game'),
+                        value: 'game',
+                        groupValue: scoreType,
+                        onChanged: (v) => setState(() => scoreType = v!),
+                      ),
+                    ),
+                    Expanded(
+                      child: RadioListTile<String>(
+                        title: const Text('Score a Practice'),
+                        value: 'practice',
+                        groupValue: scoreType,
+                        onChanged: (v) => setState(() => scoreType = v!),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+                if (scoreType == 'game') ...[
+                  _label('*Home Team:'),
+                  DropdownButtonFormField<String>(
+                    items: loginController.getTeams().map((e) {
+                      return DropdownMenuItem(value: e.id, child: Text(e.name ?? ""));
+                    }).toList(),
+                    onChanged: (v) => setState(() => homeTeam = v!),
+                    validator: (value) => value == null ? 'Required' : null,
+                  ),
+                  Row(
+                    children: [
+                      Container(width: 30, height: 30, color: homeTeamColor, margin: const EdgeInsets.only(right: 8)),
+                      TextButton(child: const Text('change color'), onPressed: () => _showColorPicker(true)),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+                  _label('*Visitor Team:'),
+                  DropdownButtonFormField<String>(
+                    items: loginController.getTeams().map((e) {
+                      return DropdownMenuItem(value: e.id, child: Text(e.name ?? ""));
+                    }).toList(),
+                    onChanged: (v) => setState(() => visitorTeam = v!),
+                    validator: (value) => value == null ? 'Required' : null,
+                  ),
+                  Row(
+                    children: [
+                      Container(width: 30, height: 30, color: visitorTeamColor, margin: const EdgeInsets.only(right: 8)),
+                      TextButton(child: const Text('change color'), onPressed: () => _showColorPicker(false)),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+                  _label('*Location:'),
+                  TextFormField(
+                    controller: locationController,
+                    decoration: const InputDecoration(hintText: "where game is played"),
+                    validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+                  ),
+
+                  CheckboxListTile(
+                    value: isNeutralSite,
+                    onChanged: (v) => setState(() => isNeutralSite = v!),
+                    title: const Text('Neutral Site (Playoff or Tournament)'),
+                  ),
+
+                  const SizedBox(height: 16),
+                  _label('Game Type:'),
+                  Column(
+                    children: gameTypes.keys.map((type) {
+                      return CheckboxListTile(
+                        value: gameTypes[type],
+                        onChanged: (v) => setState(() => gameTypes[type] = v!),
+                        title: Text(type),
+                      );
+                    }).toList(),
+                  ),
+                ],
+
+                const SizedBox(height: 16),
+                _label('*Date:'),
+                TextFormField(
+                  controller: dateController,
+                  readOnly: true,
+                  validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+                ),
+
+                const SizedBox(height: 16),
+                _label('*Start Time:'),
+                TextFormField(
+                  controller: startTimeController,
+                  readOnly: true,
+                  validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+                ),
+
+                const SizedBox(height: 16),
+                _label('*Scoring Rules:'),
+                DropdownButtonFormField<String>(
+                  items: loginController.getScoringRules().map((e) {
+                    return DropdownMenuItem(value: e.id, child: Text(e.name ?? ""));
+                  }).toList(),
+                  onChanged: (v) => setState(() => scoringRules = v!),
+                  validator: (value) => value == null ? 'Required' : null,
+                ),
+
+                const SizedBox(height: 16),
+                _label('Filmed By:'),
+                TextFormField(
+                  controller: filmedByController,
+                  decoration: const InputDecoration(hintText: 'name of camera operator (optional)'),
+                ),
+
+                const SizedBox(height: 16),
+                _label('*Video Source:'),
+                Column(
+                  children: [
+                    RadioListTile(value: 'cloud', groupValue: uploadOption, onChanged: (v) => setState(() => uploadOption = v!), title: const Text("Upload Video to Cloud Server")),
+                    RadioListTile(value: 'youtube', groupValue: uploadOption, onChanged: (v) => setState(() => uploadOption = v!), title: const Text("YouTube URL")),
+                    RadioListTile(value: 'url', groupValue: uploadOption, onChanged: (v) => setState(() => uploadOption = v!), title: const Text("Video URL (MP4 or MOV file)")),
+                    RadioListTile(value: 'later', groupValue: uploadOption, onChanged: (v) => setState(() => uploadOption = v!), title: const Text("Scheduled (Upload Later)")),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+                _label('*Scorer:'),
+                RadioListTile<String>(
+                  title: const Text('Hoopsalytics will score this game for me.'),
+                  value: 'hoopsalytics',
+                  groupValue: scorerOption,
+                  onChanged: (v) => setState(() => scorerOption = v!),
+                ),
+                RadioListTile<String>(
+                  title: const Text('I will score the video myself'),
+                  value: 'self',
+                  groupValue: scorerOption,
+                  onChanged: (v) => setState(() => scorerOption = v!),
                 ),
               ],
-
-              const SizedBox(height: 16),
-              _label('*Date:'),
-              TextFormField(initialValue: '15/07/2025', readOnly: true),
-
-              const SizedBox(height: 16),
-              _label('*Start Time:'),
-              TextFormField(initialValue: '04:00 pm', readOnly: true),
-
-              const SizedBox(height: 16),
-              _label('*Scoring Rules:'),
-              DropdownButtonFormField<String>(
-                value: scoringRules.isNotEmpty ? scoringRules : null,
-                items: loginController.getScoringRules().map((e) {
-                  return DropdownMenuItem(value: e.id, child: Text(e.name ?? ""));
-                }).toList(),
-                onChanged: (v) => setState(() => scoringRules = v!),
-              ),
-
-              const SizedBox(height: 16),
-              _label('Filmed By:'),
-              TextFormField(
-                controller: filmedByController,
-                decoration: const InputDecoration(hintText: 'name of camera operator (optional)'),
-              ),
-
-              const SizedBox(height: 16),
-              _label('*Video Source:'),
-              Column(
-                children: [
-                  RadioListTile(title: const Text("Upload Video to Cloud Server"), value: 'cloud', groupValue: '', onChanged: (_) {}),
-                  RadioListTile(title: const Text("YouTube URL"), value: 'youtube', groupValue: '', onChanged: (_) {}),
-                  RadioListTile(title: const Text("Video URL (MP4 or MOV file)"), value: 'url', groupValue: '', onChanged: (_) {}),
-                  RadioListTile(title: const Text("Scheduled (Upload Later)"), value: 'later', groupValue: '', onChanged: (_) {}),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-              _label('*Scorer:'),
-              RadioListTile<String>(
-                title: const Text('Hoopsalytics will score this game for me.'),
-                value: 'hoopsalytics',
-                groupValue: scorerOption,
-                onChanged: (v) => setState(() => scorerOption = v!),
-              ),
-              RadioListTile<String>(
-                title: const Text('I will score the video myself'),
-                value: 'self',
-                groupValue: scorerOption,
-                onChanged: (v) => setState(() => scorerOption = v!),
-              ),
-            ],
-          );
-        }),
+            );
+          }),
+        ),
       ),
-      bottomNavigationBar: CustomButton(
-        onTap: () async {
-          // await VimeoUploader().generateAccessToken();
-          VimeoUploader().uploadVideo(File(metDataController.videPath.value));
-
-          // metDataController.saveGame(
-          //   loginController.emailController.value.text,
-          //   loginController.passwordController.value.text,
-          //   LocalStorage.readJson(key: LocalStorageKeys.programID),
-          //   metDataController.selectedSeason.value,
-          //   sameLevel,
-          //   "gameDate",
-          //   "gameStartTime",
-          //   scorerOption=="self"?"1":"0",
-          //   homeTeam,
-          //   visitorTeam,
-          //   "newHomeTeamName",
-          //   "newVisitorTeamName",
-          //   homeTeamColor.colorSpace.hashCode.toString(),
-          //   visitorTeamColor.colorSpace.hashCode.toString(),
-          //   "scorebookPhotoUrl",
-          //   "videoUrl",
-          //   location,
-          //   scoringRules,
-          //   isNeutralSite?"1":"0",
-          //
-          //   "0",);
-        },
-
-        buttonText: "Continue",
-        backgroundColor: Colors.orange,
-        icon: const Icon(Icons.arrow_forward, color: Colors.white),
-      ).paddingOnly(bottom: 10.h, top: 5.h),
+      bottomNavigationBar: Obx(() {
+        return CustomButton(
+          isLoading: metDataController.isLoading.value,
+          onTap: () async {
+            if (_formKey.currentState!.validate()) {
+              await metDataController.saveGame(
+                loginController.emailController.value.text,
+                loginController.passwordController.value.text,
+                LocalStorage.readJson(key: LocalStorageKeys.programID),
+                metDataController.selectedSeason.value,
+                sameLevel,
+                dateController.text,
+                startTimeController.text,
+                scorerOption == "self" ? "1" : "0",
+                homeTeam,
+                visitorTeam,
+                "newHomeTeamName",
+                "newVisitorTeamName",
+                homeTeamColor.colorSpace.hashCode.toString(),
+                visitorTeamColor.colorSpace.hashCode.toString(),
+                "scorebookPhotoUrl",
+                "videoUrl",
+                locationController.text,
+                scoringRules,
+                isNeutralSite ? "1" : "0",
+                "0",
+              );
+            } else {
+              Get.snackbar("Validation Failed", "Please complete all required fields",
+                  backgroundColor: Colors.red, colorText: Colors.white);
+            }
+          },
+          buttonText: "Continue",
+          backgroundColor: Colors.orange,
+          icon: const Icon(Icons.arrow_forward, color: Colors.white),
+        );
+      }).paddingOnly(bottom: 10.h, top: 5.h),
     );
   }
 
@@ -339,3 +363,4 @@ class _GameSetupFormState extends State<GameSetupForm> {
     );
   }
 }
+

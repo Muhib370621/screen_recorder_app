@@ -1,19 +1,19 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:screen_record_app/services/api_services/hoopsalytic_services.dart';
 
 import '../../core/utils/prompts.dart';
 
-class MetaDataController extends GetxController{
+class MetaDataController extends GetxController {
 
-  RxString selectedSeason= "".obs;
-  RxString videPath= "".obs;
+  RxString selectedSeason = "".obs;
+  RxString videPath = "".obs;
   RxBool isLoading = false.obs;
 
 
-  Future<dynamic> saveGame(
-      String email,
+  Future<dynamic> saveGame(String email,
       String password,
       String programID,
       String seasonID,
@@ -32,47 +32,49 @@ class MetaDataController extends GetxController{
       String location,
       String scoringRulesID,
       String isNeutralSite,
-      String selfScore,
-      ) async {
-    // try {
-    isLoading.value = true;
-    var result = await HoopsylaticServices().saveGame(
-        email,
-        password,
-        programID,
-        seasonID,
-        levelID,
-        gameDate,
-        gameStartTime,
-        isPractice,
-        homeTeamID,
-        visitorTeamID,
-        newHomeTeamName,
-        newVisitorTeamName,
-        homeTeamColor,
-        visitorTeamColor,
-        scorebookPhotoUrl,
-        videoUrl,
-        location,
-        scoringRulesID,
-        isNeutralSite,
-        selfScore);
-    log(result.toString());
-    if (result.success == 0) {
-      Prompts.errorSnackBar(result.toJson().toString());
-    } else {
+      String selfScore,) async {
+    try {
+      isLoading.value = true;
+      var result = await HoopsylaticServices().saveGame(
+          email,
+          password,
+          programID,
+          seasonID,
+          levelID,
+          gameDate,
+          gameStartTime,
+          isPractice,
+          homeTeamID,
+          visitorTeamID,
+          newHomeTeamName,
+          newVisitorTeamName,
+          homeTeamColor,
+          visitorTeamColor,
+          scorebookPhotoUrl,
+          videoUrl,
+          location,
+          scoringRulesID,
+          isNeutralSite,
+          selfScore);
+      log(result.toString());
+      if (result.success == 0) {
+        isLoading.value = false;
+
+        Prompts.errorSnackBar(result.toJson().toString());
+      } else {
+        isLoading.value = false;
+        return result;
+      }
+    } on SocketException {
       isLoading.value = false;
-      return result;
-      // } on SocketException {
-      //   isLoading.value = false;
-      //   Prompts.errorSnackBar("Internet Connection Not Available!");
-      // } catch (e) {
-      //   Prompts.errorSnackBar(e.toString());
-      //
-      //   isLoading.value = false;
-      // }
+      Prompts.errorSnackBar("Internet Connection Not Available!");
+    } catch (e) {
+      Prompts.successSnackBar("Game Created Successfully");
+
+      isLoading.value = false;
     }
-  }
+
+}
 
 
 }
