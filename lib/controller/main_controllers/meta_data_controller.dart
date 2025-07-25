@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:screen_record_app/services/api_services/hoopsalytic_services.dart';
 
 import '../../core/utils/prompts.dart';
+import '../../model/entities/local_game_model.dart';
+import '../../services/local_storage/local_storage.dart';
 
 class MetaDataController extends GetxController {
 
@@ -56,6 +58,9 @@ class MetaDataController extends GetxController {
           scoringRulesID,
           isNeutralSite,
           selfScore);
+
+
+
       log(result.toString());
       if (result.success == 0) {
         isLoading.value = false;

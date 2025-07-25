@@ -1,5 +1,5 @@
+// All your imports remain unchanged
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -10,8 +10,6 @@ import 'package:screen_record_app/services/local_storage/local_storage.dart';
 import 'package:screen_record_app/services/local_storage/local_storage_keys.dart';
 import '../../../core/utils/app_colors.dart';
 import '../../components/custom_button.dart';
-
-// Keep your imports unchanged
 
 class GameSetupForm extends StatefulWidget {
   const GameSetupForm({super.key});
@@ -67,19 +65,8 @@ class _GameSetupFormState extends State<GameSetupForm> {
   ];
 
   final List<String> colorLabels = [
-    "White",
-    "Black",
-    "Blue",
-    "Brown",
-    "Gray",
-    "Green",
-    "Maroon",
-    "Navy",
-    "Orange",
-    "Pink",
-    "Purple",
-    "Red",
-    "Yellow",
+    "White", "Black", "Blue", "Brown", "Gray", "Green", "Maroon", "Navy",
+    "Orange", "Pink", "Purple", "Red", "Yellow",
   ];
 
   void _showColorPicker(bool isHome) {
@@ -133,6 +120,34 @@ class _GameSetupFormState extends State<GameSetupForm> {
     );
   }
 
+  Future<void> _pickDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      setState(() {
+        dateController.text = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+      });
+    }
+  }
+
+  Future<void> _pickTime() async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        final now = DateTime.now();
+        final dt = DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
+        startTimeController.text = TimeOfDay.fromDateTime(dt).format(context).toLowerCase();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final loginController = Get.put(LoginController());
@@ -159,7 +174,6 @@ class _GameSetupFormState extends State<GameSetupForm> {
                   onChanged: (v) => metDataController.selectedSeason.value = v!,
                   validator: (value) => value == null ? 'Required' : null,
                 ),
-
                 const SizedBox(height: 16),
                 _label('Same Level as:'),
                 DropdownButtonFormField<String>(
@@ -169,7 +183,6 @@ class _GameSetupFormState extends State<GameSetupForm> {
                   onChanged: (v) => setState(() => sameLevel = v!),
                   validator: (value) => value == null ? 'Required' : null,
                 ),
-
                 const SizedBox(height: 8),
                 _label('Score Option:'),
                 Row(
@@ -192,7 +205,6 @@ class _GameSetupFormState extends State<GameSetupForm> {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 16),
                 if (scoreType == 'game') ...[
                   _label('*Home Team:'),
@@ -209,7 +221,6 @@ class _GameSetupFormState extends State<GameSetupForm> {
                       TextButton(child: const Text('change color'), onPressed: () => _showColorPicker(true)),
                     ],
                   ),
-
                   const SizedBox(height: 16),
                   _label('*Visitor Team:'),
                   DropdownButtonFormField<String>(
@@ -225,7 +236,6 @@ class _GameSetupFormState extends State<GameSetupForm> {
                       TextButton(child: const Text('change color'), onPressed: () => _showColorPicker(false)),
                     ],
                   ),
-
                   const SizedBox(height: 16),
                   _label('*Location:'),
                   TextFormField(
@@ -233,13 +243,11 @@ class _GameSetupFormState extends State<GameSetupForm> {
                     decoration: const InputDecoration(hintText: "where game is played"),
                     validator: (value) => value == null || value.isEmpty ? 'Required' : null,
                   ),
-
                   CheckboxListTile(
                     value: isNeutralSite,
                     onChanged: (v) => setState(() => isNeutralSite = v!),
                     title: const Text('Neutral Site (Playoff or Tournament)'),
                   ),
-
                   const SizedBox(height: 16),
                   _label('Game Type:'),
                   Column(
@@ -252,23 +260,22 @@ class _GameSetupFormState extends State<GameSetupForm> {
                     }).toList(),
                   ),
                 ],
-
                 const SizedBox(height: 16),
                 _label('*Date:'),
                 TextFormField(
                   controller: dateController,
                   readOnly: true,
+                  onTap: _pickDate,
                   validator: (value) => value == null || value.isEmpty ? 'Required' : null,
                 ),
-
                 const SizedBox(height: 16),
                 _label('*Start Time:'),
                 TextFormField(
                   controller: startTimeController,
                   readOnly: true,
+                  onTap: _pickTime,
                   validator: (value) => value == null || value.isEmpty ? 'Required' : null,
                 ),
-
                 const SizedBox(height: 16),
                 _label('*Scoring Rules:'),
                 DropdownButtonFormField<String>(
@@ -278,14 +285,12 @@ class _GameSetupFormState extends State<GameSetupForm> {
                   onChanged: (v) => setState(() => scoringRules = v!),
                   validator: (value) => value == null ? 'Required' : null,
                 ),
-
                 const SizedBox(height: 16),
                 _label('Filmed By:'),
                 TextFormField(
                   controller: filmedByController,
                   decoration: const InputDecoration(hintText: 'name of camera operator (optional)'),
                 ),
-
                 const SizedBox(height: 16),
                 _label('*Video Source:'),
                 Column(
@@ -296,7 +301,6 @@ class _GameSetupFormState extends State<GameSetupForm> {
                     RadioListTile(value: 'later', groupValue: uploadOption, onChanged: (v) => setState(() => uploadOption = v!), title: const Text("Scheduled (Upload Later)")),
                   ],
                 ),
-
                 const SizedBox(height: 16),
                 _label('*Scorer:'),
                 RadioListTile<String>(
@@ -363,4 +367,3 @@ class _GameSetupFormState extends State<GameSetupForm> {
     );
   }
 }
-

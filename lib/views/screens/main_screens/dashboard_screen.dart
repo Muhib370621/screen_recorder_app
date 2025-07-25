@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:screen_record_app/core/utils/app_text_styles.dart';
 import 'package:screen_record_app/views/components/custom_button.dart';
 import 'package:screen_record_app/views/screens/main_screens/record_video_screen.dart';
+import 'package:screen_record_app/views/screens/main_screens/view_local_games_screen.dart';
 
 import '../../../core/utils/app_colors.dart';
 import '../../../services/local_storage/local_storage.dart';
@@ -45,14 +46,20 @@ class DashboardScreen extends StatelessWidget {
               children: [
                 CustomButton(
                   onTap: () {
-                    Get.to(()=> RecordVideoScreen());
+                    Get.to(() => RecordVideoScreen());
                   },
                   backgroundColor: AppColors.primaryColor,
                   buttonText: "Start Recording",
-                  icon: Icon(Icons.video_call_outlined, color: AppColors.pureWhite),
+                  icon: Icon(
+                    Icons.video_call_outlined,
+                    color: AppColors.pureWhite,
+                  ),
                 ),
                 10.h.verticalSpace,
                 CustomButton(
+                  onTap: () {
+                    Get.to(() => LocalGameListScreen());
+                  },
                   backgroundColor: AppColors.primaryColor,
 
                   buttonText: "View Games      ",
@@ -66,7 +73,7 @@ class DashboardScreen extends StatelessWidget {
                   icon: Icon(Icons.logout, color: AppColors.pureWhite),
                 ),
               ],
-            ).paddingSymmetric(horizontal: 20.w,),
+            ).paddingSymmetric(horizontal: 20.w),
           ],
         ),
       ),
