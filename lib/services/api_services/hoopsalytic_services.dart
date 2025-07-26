@@ -2,7 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:screen_record_app/services/local_storage/local_storage.dart';
 
+import '../../model/entities/local_game_model.dart';
 import '../core/api_helper.dart';
 import '../core/app_urls.dart';
 
@@ -32,6 +34,33 @@ class HoopsylaticServices {
   ) async {
     // url
     String url = AppUrls.saveGame();
+
+    final localGame = LocalGameModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      email: email,
+      password: password,
+      programID: programID,
+      seasonID: seasonID,
+      levelID: levelID,
+      gameDate: gameDate,
+      gameStartTime: gameStartTime,
+      isPractice: isPractice,
+      homeTeamID: homeTeamID,
+      visitorTeamID: visitorTeamID,
+      newHomeTeamName: newHomeTeamName,
+      newVisitorTeamName: newVisitorTeamName,
+      homeTeamColor: homeTeamColor,
+      visitorTeamColor: visitorTeamColor,
+      scorebookPhotoUrl: scorebookPhotoUrl,
+      videoUrl: videoUrl,
+      location: location,
+      scoringRulesID: scoringRulesID,
+      isNeutralSite: isNeutralSite,
+      selfScore: selfScore,
+    );
+
+// Save locally
+    await LocalStorage().saveGameLocally(localGame);
 
     // //header
     // var header = AppHeaders.getOnlyBearerHeaders(

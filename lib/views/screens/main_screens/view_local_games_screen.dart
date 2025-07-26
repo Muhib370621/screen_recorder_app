@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:screen_record_app/services/local_storage/local_storage.dart';
+import 'package:screen_record_app/views/screens/main_screens/edit_game_screen.dart';
 
 import '../../../model/entities/local_game_model.dart';
 
@@ -66,12 +68,16 @@ class _LocalGameListScreenState extends State<LocalGameListScreen> {
                   },
                   icon: const Icon(Icons.ondemand_video),
                   label: const Text("Video"),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey[700]),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey[200]),
                 ),
                 const SizedBox(width: 10),
                 PopupMenuButton<String>(
                   onSelected: (value) {
                     if (value == 'edit') {
+                      Get.to(()=>EditGameForm(game: game, onUpdate: (updatedGame) {
+
+                        LocalStorage().updateGameLocally(updatedGame);
+                      },) );
                       // Navigate to edit screen
                     } else if (value == 'replace') {
                       // Implement replace video logic
