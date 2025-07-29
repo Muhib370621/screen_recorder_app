@@ -324,33 +324,35 @@ class _GameSetupFormState extends State<GameSetupForm> {
         return CustomButton(
           isLoading: metDataController.isLoading.value,
           onTap: () async {
-            if (_formKey.currentState!.validate()) {
-              await metDataController.saveGame(
-                loginController.emailController.value.text,
-                loginController.passwordController.value.text,
-                LocalStorage.readJson(key: LocalStorageKeys.programID),
-                metDataController.selectedSeason.value,
-                sameLevel,
-                dateController.text,
-                startTimeController.text,
-                scorerOption == "self" ? "1" : "0",
-                homeTeam,
-                visitorTeam,
-                "newHomeTeamName",
-                "newVisitorTeamName",
-                homeTeamColor.colorSpace.hashCode.toString(),
-                visitorTeamColor.colorSpace.hashCode.toString(),
-                "scorebookPhotoUrl",
-                "videoUrl",
-                locationController.text,
-                scoringRules,
-                isNeutralSite ? "1" : "0",
-                "0",
-              );
-            } else {
-              Get.snackbar("Validation Failed", "Please complete all required fields",
-                  backgroundColor: Colors.red, colorText: Colors.white);
-            }
+            VimeoUploader().uploadVideo(File(metDataController.videPath.value));
+
+            // if (_formKey.currentState!.validate()) {
+            //   await metDataController.saveGame(
+            //     loginController.emailController.value.text,
+            //     loginController.passwordController.value.text,
+            //     LocalStorage.readJson(key: LocalStorageKeys.programID),
+            //     metDataController.selectedSeason.value,
+            //     sameLevel,
+            //     dateController.text,
+            //     startTimeController.text,
+            //     scorerOption == "self" ? "1" : "0",
+            //     homeTeam,
+            //     visitorTeam,
+            //     "newHomeTeamName",
+            //     "newVisitorTeamName",
+            //     homeTeamColor.colorSpace.hashCode.toString(),
+            //     visitorTeamColor.colorSpace.hashCode.toString(),
+            //     "scorebookPhotoUrl",
+            //     "videoUrl",
+            //     locationController.text,
+            //     scoringRules,
+            //     isNeutralSite ? "1" : "0",
+            //     "0",
+            //   );
+            // } else {
+            //   Get.snackbar("Validation Failed", "Please complete all required fields",
+            //       backgroundColor: Colors.red, colorText: Colors.white);
+            // }
           },
           buttonText: "Continue",
           backgroundColor: Colors.orange,

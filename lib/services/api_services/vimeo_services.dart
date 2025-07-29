@@ -56,7 +56,7 @@ class VimeoUploader {
     final fileSize = await videoFile.length();
     final mimeType = lookupMimeType(videoFile.path) ?? 'video/mp4';
     var header = {
-      'Authorization': 'bearer ${await generateAccessToken()}',
+      'Authorization': 'bearer e80e2b663a36356c9ddf80524e5b0310',
       'Content-Type': 'application/json',
       'Accept': 'application/vnd.vimeo.*+json;version=3.4',
     };

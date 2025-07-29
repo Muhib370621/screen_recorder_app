@@ -146,7 +146,10 @@ class _EditGameFormState extends State<EditGameForm> {
     // }
 
     widget.onUpdate(updatedGame);
+
     Get.back();
+    Get.snackbar("Success", "Game Edited Successfully",
+        backgroundColor: Colors.green, colorText: Colors.white);
   }
 
   @override
