@@ -286,22 +286,22 @@ class _GameSetupFormState extends State<GameSetupForm> {
                   validator: (value) => value == null ? 'Required' : null,
                 ),
                 const SizedBox(height: 16),
-                _label('Filmed By:'),
-                TextFormField(
-                  controller: filmedByController,
-                  decoration: const InputDecoration(hintText: 'name of camera operator (optional)'),
-                ),
-                const SizedBox(height: 16),
-                _label('*Video Source:'),
-                Column(
-                  children: [
-                    RadioListTile(value: 'cloud', groupValue: uploadOption, onChanged: (v) => setState(() => uploadOption = v!), title: const Text("Upload Video to Cloud Server")),
-                    RadioListTile(value: 'youtube', groupValue: uploadOption, onChanged: (v) => setState(() => uploadOption = v!), title: const Text("YouTube URL")),
-                    RadioListTile(value: 'url', groupValue: uploadOption, onChanged: (v) => setState(() => uploadOption = v!), title: const Text("Video URL (MP4 or MOV file)")),
-                    RadioListTile(value: 'later', groupValue: uploadOption, onChanged: (v) => setState(() => uploadOption = v!), title: const Text("Scheduled (Upload Later)")),
-                  ],
-                ),
-                const SizedBox(height: 16),
+                // _label('Filmed By:'),
+                // TextFormField(
+                //   controller: filmedByController,
+                //   decoration: const InputDecoration(hintText: 'name of camera operator (optional)'),
+                // ),
+                // const SizedBox(height: 16),
+                // _label('*Video Source:'),
+                // Column(
+                //   children: [
+                //     RadioListTile(value: 'cloud', groupValue: uploadOption, onChanged: (v) => setState(() => uploadOption = v!), title: const Text("Upload Video to Cloud Server")),
+                //     RadioListTile(value: 'youtube', groupValue: uploadOption, onChanged: (v) => setState(() => uploadOption = v!), title: const Text("YouTube URL")),
+                //     RadioListTile(value: 'url', groupValue: uploadOption, onChanged: (v) => setState(() => uploadOption = v!), title: const Text("Video URL (MP4 or MOV file)")),
+                //     RadioListTile(value: 'later', groupValue: uploadOption, onChanged: (v) => setState(() => uploadOption = v!), title: const Text("Scheduled (Upload Later)")),
+                //   ],
+                // ),
+                // const SizedBox(height: 16),
                 _label('*Scorer:'),
                 RadioListTile<String>(
                   title: const Text('Hoopsalytics will score this game for me.'),
@@ -318,41 +318,43 @@ class _GameSetupFormState extends State<GameSetupForm> {
               ],
             );
           }),
+
         ),
       ),
       bottomNavigationBar: Obx(() {
         return CustomButton(
           isLoading: metDataController.isLoading.value,
           onTap: () async {
-            VimeoUploader().uploadVideo(File(metDataController.videPath.value));
 
-            // if (_formKey.currentState!.validate()) {
-            //   await metDataController.saveGame(
-            //     loginController.emailController.value.text,
-            //     loginController.passwordController.value.text,
-            //     LocalStorage.readJson(key: LocalStorageKeys.programID),
-            //     metDataController.selectedSeason.value,
-            //     sameLevel,
-            //     dateController.text,
-            //     startTimeController.text,
-            //     scorerOption == "self" ? "1" : "0",
-            //     homeTeam,
-            //     visitorTeam,
-            //     "newHomeTeamName",
-            //     "newVisitorTeamName",
-            //     homeTeamColor.colorSpace.hashCode.toString(),
-            //     visitorTeamColor.colorSpace.hashCode.toString(),
-            //     "scorebookPhotoUrl",
-            //     "videoUrl",
-            //     locationController.text,
-            //     scoringRules,
-            //     isNeutralSite ? "1" : "0",
-            //     "0",
-            //   );
-            // } else {
-            //   Get.snackbar("Validation Failed", "Please complete all required fields",
-            //       backgroundColor: Colors.red, colorText: Colors.white);
-            // }
+
+            if (_formKey.currentState!.validate()) {
+              String videoUrl = await VimeoUploader().uploadVideo(File(metDataController.videPath.value));
+              await metDataController.saveGame(
+                loginController.emailController.value.text,
+                loginController.passwordController.value.text,
+                LocalStorage.readJson(key: LocalStorageKeys.programID),
+                metDataController.selectedSeason.value,
+                sameLevel,
+                dateController.text,
+                startTimeController.text,
+                scorerOption == "self" ? "1" : "0",
+                homeTeam,
+                visitorTeam,
+                "newHomeTeamName",
+                "newVisitorTeamName",
+                homeTeamColor.colorSpace.hashCode.toString(),
+                visitorTeamColor.colorSpace.hashCode.toString(),
+                "scorebookPhotoUrl",
+                videoUrl,
+                locationController.text,
+                scoringRules,
+                isNeutralSite ? "1" : "0",
+                "0",
+              );
+            } else {
+              Get.snackbar("Validation Failed", "Please complete all required fields",
+                  backgroundColor: Colors.red, colorText: Colors.white);
+            }
           },
           buttonText: "Continue",
           backgroundColor: Colors.orange,

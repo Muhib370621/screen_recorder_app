@@ -47,7 +47,7 @@ class VimeoUploader {
   }
 
   /// Upload video using TUS protocol (requires user-authenticated token)
-  Future<void> uploadVideo(File videoFile, {String title = "My Video"}) async {
+  Future<String> uploadVideo(File videoFile, {String title = "My Video"}) async {
 
     // if (_accessToken == null) {
     //   throw Exception('⚠️ Access token is null. Call generateAccessToken() or set a valid token manually.');
@@ -93,11 +93,12 @@ class VimeoUploader {
       body: videoBytes,
     );
 
-    if (uploadResponse.statusCode != 204) {
-      throw Exception('❌ Failed to upload video to Vimeo: ${uploadResponse.body}');
-    }
+    // if (uploadResponse.statusCode != 204) {
+    //   throw Exception('❌ Failed to upload video to Vimeo: ${uploadResponse.body}');
+    // }
 
     print("✅ Upload complete");
+    return uploadLink;
   }
 
   /// Optional: Set token manually if you're using a pre-generated user token
